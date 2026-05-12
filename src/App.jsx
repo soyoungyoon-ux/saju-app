@@ -1765,7 +1765,7 @@ ${aspectStr}
         method:"POST",
         headers:{ "Content-Type":"application/json" },
         body: JSON.stringify({
-          model:"claude-sonnet-4-20250514", max_tokens:4000,
+          model:"claude-sonnet-4-6", max_tokens:4000,
           system:"당신은 사주명리학과 서양점성술을 통달했지만, 무엇보다 따뜻한 인생의 길잡이입니다. 좋은 사주도 나쁜 사주도 없으며, 모든 사람은 빛과 그림자를 함께 가진 존재임을 깊이 이해하고 있습니다. 운명을 단정 짓지 않고, 자기 이해와 성장으로 안내합니다. 두려움 대신 자비의 언어를 사용하며, 결국 모든 통찰은 '오늘보다 조금 더 나은 내가 되고, 주변에 더 좋은 사람이 되는 길'로 수렴해야 합니다. 반드시 순수 JSON만 반환하고 마크다운 코드블록을 절대 사용하지 마십시오.",
           messages:[{ role:"user", content: buildPrompt() }]
         })
@@ -2072,7 +2072,7 @@ B가 A로부터 받는 용신 점수: ${compat.yongCompat.bGetsFromA}%
         method:"POST",
         headers:{ "Content-Type":"application/json" },
         body: JSON.stringify({
-          model:"claude-sonnet-4-20250514", max_tokens:4000,
+          model:"claude-sonnet-4-6", max_tokens:4000,
           system:"당신은 사주명리와 점성술 양쪽에 통달한 따뜻한 관계 상담자입니다. 두 사람의 궁합을 평가하지 않고, 서로를 통해 어떻게 더 나은 사람으로 자랄 수 있는지 비춰주는 거울 역할을 합니다. 좋은 궁합도 나쁜 궁합도 없습니다. 반드시 순수 JSON만 반환하고 마크다운 코드블록을 절대 사용하지 마십시오.",
           messages:[{ role:"user", content: buildPrompt() }]
         })
