@@ -1,6 +1,120 @@
 import { useState, useEffect } from "react";
 
 // ═══════════════════════════════════════════════════════════
+//  THEMES
+// ═══════════════════════════════════════════════════════════
+const THEMES = {
+  night: {
+    id: "night",
+    name: "밤하늘",
+    nameEn: "Night Sky",
+    icon: "🌌",
+    bg: "linear-gradient(160deg,#04070f 0%,#080c1a 50%,#060a16 100%)",
+    cardBg: "rgba(8,12,26,0.85)",
+    cardBorder: "rgba(201,168,76,0.18)",
+    text: "#f0e6c8",
+    textMuted: "rgba(240,230,200,0.6)",
+    textFaint: "rgba(240,230,200,0.4)",
+    accent: "#c9a84c",
+    accentMuted: "rgba(201,168,76,0.6)",
+    divider: "rgba(201,168,76,0.4)",
+    labelColor: "rgba(201,168,76,0.6)",
+    inputBg: "rgba(255,255,255,0.04)",
+    inputBorder: "rgba(201,168,76,0.25)",
+    inputText: "#f0e6c8",
+    toggleBg: "rgba(255,255,255,0.03)",
+    toggleBorder: "rgba(201,168,76,0.15)",
+    toggleText: "rgba(240,230,200,0.5)",
+    toggleActiveBg: "rgba(201,168,76,0.2)",
+    toggleActiveBorder: "rgba(201,168,76,0.6)",
+    toggleActiveText: "#c9a84c",
+    buttonPrimaryBg: "linear-gradient(135deg,rgba(201,168,76,0.3),rgba(180,140,60,0.15))",
+    buttonPrimaryBorder: "rgba(201,168,76,0.6)",
+    buttonPrimaryText: "#f0e6c8",
+    buttonDisabledBg: "rgba(255,255,255,0.03)",
+    buttonDisabledBorder: "rgba(201,168,76,0.1)",
+    buttonDisabledText: "rgba(240,230,200,0.25)",
+  },
+  hanji: {
+    id: "hanji",
+    name: "한지",
+    nameEn: "Korean Paper",
+    icon: "📜",
+    bg: "linear-gradient(160deg,#f4ead5 0%,#f0e3c0 50%,#ebd9b0 100%)",
+    cardBg: "rgba(255,250,240,0.85)",
+    cardBorder: "rgba(139,90,43,0.25)",
+    text: "#4a2e1a",
+    textMuted: "rgba(74,46,26,0.7)",
+    textFaint: "rgba(74,46,26,0.45)",
+    accent: "#8b5a2b",
+    accentMuted: "rgba(139,90,43,0.7)",
+    divider: "rgba(139,90,43,0.4)",
+    labelColor: "rgba(139,90,43,0.75)",
+    inputBg: "rgba(255,253,247,0.7)",
+    inputBorder: "rgba(139,90,43,0.3)",
+    inputText: "#4a2e1a",
+    toggleBg: "rgba(255,253,247,0.6)",
+    toggleBorder: "rgba(139,90,43,0.2)",
+    toggleText: "rgba(74,46,26,0.5)",
+    toggleActiveBg: "rgba(139,90,43,0.15)",
+    toggleActiveBorder: "rgba(139,90,43,0.6)",
+    toggleActiveText: "#8b5a2b",
+    buttonPrimaryBg: "linear-gradient(135deg,rgba(139,90,43,0.25),rgba(120,75,35,0.12))",
+    buttonPrimaryBorder: "rgba(139,90,43,0.5)",
+    buttonPrimaryText: "#4a2e1a",
+    buttonDisabledBg: "rgba(139,90,43,0.05)",
+    buttonDisabledBorder: "rgba(139,90,43,0.1)",
+    buttonDisabledText: "rgba(74,46,26,0.3)",
+  },
+  meditation: {
+    id: "meditation",
+    name: "명상",
+    nameEn: "Meditation",
+    icon: "🤍",
+    bg: "linear-gradient(160deg,#fafafa 0%,#f5f5f7 50%,#f0f0f3 100%)",
+    cardBg: "rgba(255,255,255,0.9)",
+    cardBorder: "rgba(180,150,80,0.2)",
+    text: "#2c2c2c",
+    textMuted: "rgba(44,44,44,0.7)",
+    textFaint: "rgba(44,44,44,0.4)",
+    accent: "#b8941f",
+    accentMuted: "rgba(184,148,31,0.7)",
+    divider: "rgba(184,148,31,0.4)",
+    labelColor: "rgba(184,148,31,0.75)",
+    inputBg: "rgba(255,255,255,0.85)",
+    inputBorder: "rgba(184,148,31,0.25)",
+    inputText: "#2c2c2c",
+    toggleBg: "rgba(255,255,255,0.7)",
+    toggleBorder: "rgba(184,148,31,0.15)",
+    toggleText: "rgba(44,44,44,0.5)",
+    toggleActiveBg: "rgba(184,148,31,0.12)",
+    toggleActiveBorder: "rgba(184,148,31,0.55)",
+    toggleActiveText: "#b8941f",
+    buttonPrimaryBg: "linear-gradient(135deg,rgba(184,148,31,0.22),rgba(160,128,25,0.1))",
+    buttonPrimaryBorder: "rgba(184,148,31,0.5)",
+    buttonPrimaryText: "#2c2c2c",
+    buttonDisabledBg: "rgba(184,148,31,0.05)",
+    buttonDisabledBorder: "rgba(184,148,31,0.1)",
+    buttonDisabledText: "rgba(44,44,44,0.3)",
+  },
+};
+
+const THEME_STORAGE_KEY = "saju_app_theme_v1";
+
+function loadTheme() {
+  try {
+    if (typeof localStorage === "undefined") return "night";
+    return localStorage.getItem(THEME_STORAGE_KEY) || "night";
+  } catch { return "night"; }
+}
+
+function saveTheme(id) {
+  try {
+    if (typeof localStorage !== "undefined") localStorage.setItem(THEME_STORAGE_KEY, id);
+  } catch {}
+}
+
+// ═══════════════════════════════════════════════════════════
 //  CONSTANTS & DATA TABLES
 // ═══════════════════════════════════════════════════════════
 const OC = {
@@ -446,19 +560,72 @@ const signLabel = lon => {
 const ganColor = c => OC[CHEONGAN[c]?.o] || OC.토;
 const jiColor  = c => OC[JIJI[c]?.o] || OC.토;
 
-function Card({ title, subtitle, children }) {
+function Card({ title, subtitle, children, theme }) {
+  const t = theme || THEMES.night;
   return (
     <div style={{
-      background:"rgba(8,12,26,0.85)", border:"1px solid rgba(201,168,76,0.18)",
-      borderRadius:10, padding:"14px 16px", marginBottom:10
+      background: t.cardBg, border:`1px solid ${t.cardBorder}`,
+      borderRadius:10, padding:"14px 16px", marginBottom:10,
+      backdropFilter:"blur(10px)"
     }}>
       {title && (
         <div style={{ marginBottom:10 }}>
-          <div style={{ fontSize:11, letterSpacing:"0.2em", color:"#c9a84c" }}>{title}</div>
-          {subtitle && <div style={{ fontSize:9, letterSpacing:"0.15em", color:"rgba(240,230,200,0.35)", marginTop:1 }}>{subtitle}</div>}
+          <div style={{ fontSize:11, letterSpacing:"0.2em", color:t.accent }}>{title}</div>
+          {subtitle && <div style={{ fontSize:9, letterSpacing:"0.15em", color:t.textFaint, marginTop:1 }}>{subtitle}</div>}
         </div>
       )}
       {children}
+    </div>
+  );
+}
+
+function ThemeSwitcher({ currentTheme, onChange }) {
+  const [open, setOpen] = useState(false);
+  const t = THEMES[currentTheme];
+  return (
+    <div style={{ position:"relative", display:"inline-block" }}>
+      <button onClick={()=>setOpen(o=>!o)} style={{
+        padding:"6px 10px", borderRadius:14, cursor:"pointer",
+        background: t.toggleActiveBg,
+        border: `1px solid ${t.cardBorder}`,
+        color: t.accent, fontSize:11, fontFamily:"inherit",
+        display:"inline-flex", alignItems:"center", gap:5
+      }}>
+        <span>{t.icon}</span>
+        <span>{t.name}</span>
+        <span style={{ fontSize:8, opacity:0.6 }}>▼</span>
+      </button>
+      {open && (
+        <>
+          <div onClick={()=>setOpen(false)} style={{
+            position:"fixed", inset:0, zIndex:99
+          }}/>
+          <div style={{
+            position:"absolute", top:"calc(100% + 4px)", right:0, zIndex:100,
+            background: t.cardBg, border:`1px solid ${t.cardBorder}`,
+            borderRadius:8, padding:5, minWidth:150,
+            boxShadow:`0 4px 20px ${t.id==="night"?"rgba(0,0,0,0.5)":"rgba(0,0,0,0.15)"}`,
+            backdropFilter:"blur(10px)"
+          }}>
+            {Object.values(THEMES).map(theme=>(
+              <button key={theme.id} onClick={()=>{ onChange(theme.id); setOpen(false); }} style={{
+                display:"flex", alignItems:"center", gap:8,
+                width:"100%", padding:"7px 10px", borderRadius:5,
+                background: theme.id===currentTheme ? t.toggleActiveBg : "transparent",
+                border:"none", cursor:"pointer", fontFamily:"inherit",
+                color: theme.id===currentTheme ? t.accent : t.textMuted,
+                fontSize:11, textAlign:"left"
+              }}
+              onMouseEnter={e=>e.currentTarget.style.background = t.toggleBg}
+              onMouseLeave={e=>e.currentTarget.style.background = theme.id===currentTheme ? t.toggleActiveBg : "transparent"}>
+                <span style={{ fontSize:13 }}>{theme.icon}</span>
+                <span>{theme.name}</span>
+                <span style={{ fontSize:8, opacity:0.5, marginLeft:"auto" }}>{theme.nameEn}</span>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -907,7 +1074,8 @@ function SaveChartButton({ onSave, saved }) {
 }
 
 // ─── LocationPicker (OpenStreetMap Nominatim) ─────────────
-function LocationPicker({ form, setForm }) {
+function LocationPicker({ form, setForm, theme }) {
+  const t = theme || THEMES.night;
   const [mode, setMode] = useState("search"); // "search" | "manual"
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -1111,63 +1279,83 @@ function LocationPicker({ form, setForm }) {
 }
 
 // ─── STEP 1: 입력 ─────────────────────────────────────────
-function Step1Input({ data, onNext }) {
+// ─── Form helper components (MUST be outside Step1Input to preserve focus) ───
+function FormLabel({ children, theme }) {
+  return <div style={{ fontSize:9, letterSpacing:"0.15em", color:theme.labelColor, marginBottom:5 }}>{children}</div>;
+}
+
+function FormInput({ value, onChange, type="text", min, max, placeholder, theme }) {
+  return (
+    <input
+      type={type}
+      value={value ?? ""}
+      min={min}
+      max={max}
+      step={type==="number" ? "any" : undefined}
+      placeholder={placeholder}
+      inputMode={type==="number" ? "decimal" : "text"}
+      onChange={onChange}
+      style={{
+        width:"100%", padding:"10px 12px", borderRadius:6, outline:"none",
+        background: theme.inputBg,
+        border: `1px solid ${theme.inputBorder}`,
+        color: theme.inputText,
+        fontSize:14, fontFamily:"inherit"
+      }} />
+  );
+}
+
+function FormToggle({ value, onChange, options, theme }) {
+  return (
+    <div style={{ display:"flex", gap:6 }}>
+      {options.map(o => (
+        <button key={o.v} type="button" onClick={()=>onChange(o.v)} style={{
+          flex:1, padding:"9px 4px", borderRadius:6, cursor:"pointer",
+          background: value===o.v ? theme.toggleActiveBg : theme.toggleBg,
+          border: `1px solid ${value===o.v ? theme.toggleActiveBorder : theme.toggleBorder}`,
+          color: value===o.v ? theme.toggleActiveText : theme.toggleText,
+          fontSize:12, fontFamily:"inherit"
+        }}>{o.l}</button>
+      ))}
+    </div>
+  );
+}
+
+function Step1Input({ data, onNext, theme }) {
   const [form, setForm] = useState(data);
   const isValid = form.name && form.year && form.month && form.day && form.gender;
 
-  function Input({ k, type="number", min, max, ph }) {
-    return (
-      <input
-        type={type} value={form[k] ?? ""} min={min} max={max}
-        step={type==="number"?"any":undefined} placeholder={ph}
-        onChange={e=>setForm({...form, [k]: type==="number" ? Number(e.target.value) : e.target.value})}
-        style={{
-          width:"100%", padding:"9px 11px", borderRadius:6, outline:"none",
-          background:"rgba(255,255,255,0.04)", border:"1px solid rgba(201,168,76,0.25)",
-          color:"#f0e6c8", fontSize:13, fontFamily:"inherit"
-        }} />
-    );
-  }
-  function Toggle({ k, options }) {
-    return (
-      <div style={{ display:"flex", gap:6 }}>
-        {options.map(o => (
-          <button key={o.v} onClick={()=>setForm({...form, [k]:o.v})} style={{
-            flex:1, padding:"8px 4px", borderRadius:6, cursor:"pointer",
-            background: form[k]===o.v ? "rgba(201,168,76,0.2)" : "rgba(255,255,255,0.03)",
-            border: `1px solid ${form[k]===o.v ? "rgba(201,168,76,0.6)" : "rgba(201,168,76,0.15)"}`,
-            color: form[k]===o.v ? "#c9a84c" : "rgba(240,230,200,0.5)",
-            fontSize:12, fontFamily:"inherit"
-          }}>{o.l}</button>
-        ))}
-      </div>
-    );
-  }
-  function Label({ children }) {
-    return <div style={{ fontSize:9, letterSpacing:"0.15em", color:"rgba(201,168,76,0.6)", marginBottom:5 }}>{children}</div>;
-  }
+  const updateField = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
+  const numField = (k) => (e) => updateField(k, e.target.value === "" ? "" : Number(e.target.value));
+  const txtField = (k) => (e) => updateField(k, e.target.value);
 
   return (
     <div style={{ animation:"fadeUp 0.5s ease both" }}>
-      <Card title="기본 정보" subtitle="Birth Information">
+      <Card title="기본 정보" subtitle="Birth Information" theme={theme}>
         <div style={{ marginBottom:12 }}>
-          <Label>이름</Label>
-          <Input k="name" type="text" ph="홍길동" />
+          <FormLabel theme={theme}>이름</FormLabel>
+          <FormInput value={form.name} onChange={txtField("name")} type="text" placeholder="홍길동" theme={theme} />
         </div>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:12 }}>
-          <div><Label>성별</Label><Toggle k="gender" options={[{v:"남",l:"남명 ☰"},{v:"여",l:"여명 ☷"}]} /></div>
-          <div><Label>달력</Label><Toggle k="calType" options={[{v:"양력",l:"양력"},{v:"음력",l:"음력"}]} /></div>
+          <div>
+            <FormLabel theme={theme}>성별</FormLabel>
+            <FormToggle value={form.gender} onChange={v=>updateField("gender", v)} options={[{v:"남",l:"남명 ☰"},{v:"여",l:"여명 ☷"}]} theme={theme} />
+          </div>
+          <div>
+            <FormLabel theme={theme}>달력</FormLabel>
+            <FormToggle value={form.calType} onChange={v=>updateField("calType", v)} options={[{v:"양력",l:"양력"},{v:"음력",l:"음력"}]} theme={theme} />
+          </div>
         </div>
         <div style={{ display:"grid", gridTemplateColumns:"1.2fr 1fr 1fr 1fr 1fr", gap:8, marginBottom:12 }}>
-          <div><Label>연도</Label><Input k="year" min={1900} max={2030} /></div>
-          <div><Label>월</Label><Input k="month" min={1} max={12} /></div>
-          <div><Label>일</Label><Input k="day" min={1} max={31} /></div>
-          <div><Label>시</Label><Input k="hour" min={0} max={23} /></div>
-          <div><Label>분</Label><Input k="minute" min={0} max={59} /></div>
+          <div><FormLabel theme={theme}>연도</FormLabel><FormInput value={form.year} onChange={numField("year")} type="number" min={1900} max={2030} theme={theme} /></div>
+          <div><FormLabel theme={theme}>월</FormLabel><FormInput value={form.month} onChange={numField("month")} type="number" min={1} max={12} theme={theme} /></div>
+          <div><FormLabel theme={theme}>일</FormLabel><FormInput value={form.day} onChange={numField("day")} type="number" min={1} max={31} theme={theme} /></div>
+          <div><FormLabel theme={theme}>시</FormLabel><FormInput value={form.hour} onChange={numField("hour")} type="number" min={0} max={23} theme={theme} /></div>
+          <div><FormLabel theme={theme}>분</FormLabel><FormInput value={form.minute} onChange={numField("minute")} type="number" min={0} max={59} theme={theme} /></div>
         </div>
 
-        <Label>출생지 (어센던트 계산용)</Label>
-        <LocationPicker form={form} setForm={setForm} />
+        <FormLabel theme={theme}>출생지 (어센던트 계산용)</FormLabel>
+        <LocationPicker form={form} setForm={setForm} theme={theme} />
 
         {form.calType === "음력" && (
           <div style={{
@@ -1185,11 +1373,9 @@ function Step1Input({ data, onNext }) {
       <button onClick={()=>isValid && onNext(form)} disabled={!isValid} style={{
         width:"100%", padding:"14px", marginTop:12, borderRadius:10,
         cursor: isValid ? "pointer" : "not-allowed",
-        background: isValid
-          ? "linear-gradient(135deg,rgba(201,168,76,0.3),rgba(180,140,60,0.15))"
-          : "rgba(255,255,255,0.03)",
-        border: `1px solid ${isValid ? "rgba(201,168,76,0.6)" : "rgba(201,168,76,0.1)"}`,
-        color: isValid ? "#f0e6c8" : "rgba(240,230,200,0.25)",
+        background: isValid ? theme.buttonPrimaryBg : theme.buttonDisabledBg,
+        border: `1px solid ${isValid ? theme.buttonPrimaryBorder : theme.buttonDisabledBorder}`,
+        color: isValid ? theme.buttonPrimaryText : theme.buttonDisabledText,
         fontSize:13, fontFamily:"inherit", letterSpacing:"0.25em", transition:"all 0.3s"
       }}>✦ 명식 세우기 →</button>
     </div>
@@ -1624,11 +1810,8 @@ function Step4Astro({ astro, aspects, onNext, onBack }) {
 // ─── STEP 5: AI 리딩 ──────────────────────────────────────
 const SECTIONS = [
   { key:"본성과_성격",         icon:"✦", title:"본성과 성격",         subtitle:"빛과 그림자를 함께",       color:"#c9a84c" },
-  { key:"재능과_적성",         icon:"🌟", title:"재능과 적성",         subtitle:"발휘하며 기여하는 길",     color:"#2ecc71" },
-  { key:"재물의_흐름",         icon:"💫", title:"재물의 흐름",         subtitle:"운영하는 지혜",            color:"#f39c12" },
-  { key:"몸과_마음_돌봄",      icon:"☽",  title:"몸과 마음 돌봄",      subtitle:"자기 사랑의 언어",         color:"#1abc9c" },
-  { key:"관계의_결",           icon:"♡",  title:"관계의 결",           subtitle:"좋은 사람이 되는 길",      color:"#e91e8c" },
-  { key:"올해의_흐름과_기회",  icon:"⭐", title:"올해의 흐름과 기회",  subtitle:"성장의 자양분으로",        color:"#9b59b6" },
+  { key:"재능과_관계",         icon:"🌟", title:"재능과 관계",         subtitle:"발휘하며 기여하는 길",     color:"#2ecc71" },
+  { key:"올해의_흐름",         icon:"⭐", title:"올해의 흐름",         subtitle:"성장의 기회",              color:"#9b59b6" },
   { key:"오늘보다_나아지는_법", icon:"∞", title:"오늘보다 나아지는 법", subtitle:"이 명식의 북극성",        color:"#3498db" },
 ];
 
@@ -1745,15 +1928,12 @@ ${astroStr}
 [주요 어스펙트]
 ${aspectStr}
 
-반드시 아래 JSON 형식으로만 응답 (마크다운 코드블록 절대 금지):
+반드시 아래 JSON 형식으로만 응답 (마크다운 코드블록 절대 금지). 각 섹션은 짧지만 따뜻하게:
 {
-  "본성과_성격": "사주 일간 + 어센던트 + 태양/달을 통합한 본성. 빛과 그림자를 함께 보되, 그림자도 따뜻하게 안아주는 톤으로. 마지막에 '오늘 자신에게 들려주면 좋을 한 마디'를 더해주세요. 350자 이상.",
-  "재능과_적성": "타고난 재능과 그 재능을 어떻게 발휘할 때 자신과 주변 모두에게 좋은 영향을 주는지. 마지막에 작은 실천 하나. 350자 이상.",
-  "재물의_흐름": "재물에 대한 태도와 운영 방식. 풍요/부족의 단정이 아니라 자기 운영의 지혜로. 마지막에 작은 실천 하나. 250자 이상.",
-  "몸과_마음_돌봄": "오행과 어스펙트가 가리키는 몸과 마음의 결. 공포가 아닌 자기 사랑의 지혜로. 마지막에 작은 돌봄 실천 하나. 250자 이상.",
-  "관계의_결": "관계 십신 + 금성/달 통합. '내가 어떤 사람이 되어야 주변에 좋은 사람이 될 수 있는가'를 중심으로. 마지막에 작은 실천 하나. 300자 이상.",
-  "올해의_흐름과_기회": "${sewoon.year}년 세운과 대운이 가리키는 성장의 기회. 위기조차 어떻게 성장의 자양분으로 삼을지. 마지막에 올해 안에 시도해볼 작은 일 하나. 350자 이상.",
-  "오늘보다_나아지는_법": "두 체계가 공통으로 가리키는, 이 사람이 '오늘보다 조금 더 나은 자신'이 되기 위한 인생의 화두. 그리고 그것이 어떻게 주변에 더 좋은 사람이 되는 길로 이어지는지. 350자 이상."
+  "본성과_성격": "사주 일간 + 어센던트 통합. 빛과 그림자를 함께 보되 따뜻한 톤. 마지막에 '오늘 자신에게 들려주면 좋을 한 마디'. 100자 내외.",
+  "재능과_관계": "타고난 재능과 관계 결을 합쳐서. '나의 성장이 주변에 좋은 영향을 준다'는 관점. 작은 실천 하나. 100자 내외.",
+  "올해의_흐름": "${sewoon.year}년 세운+대운이 가리키는 성장 기회. 올해 시도할 작은 일 하나. 100자 내외.",
+  "오늘보다_나아지는_법": "이 명식의 북극성 — '오늘보다 나은 나, 주변에 더 좋은 사람'이 되기 위한 핵심 화두. 120자 내외."
 }`;
   }
 
@@ -1765,7 +1945,7 @@ ${aspectStr}
         method:"POST",
         headers:{ "Content-Type":"application/json" },
         body: JSON.stringify({
-          model:"claude-sonnet-4-6", max_tokens:4000,
+          model:"claude-haiku-4-5-20251001", max_tokens:1000,
           system:"당신은 사주명리학과 서양점성술을 통달했지만, 무엇보다 따뜻한 인생의 길잡이입니다. 좋은 사주도 나쁜 사주도 없으며, 모든 사람은 빛과 그림자를 함께 가진 존재임을 깊이 이해하고 있습니다. 운명을 단정 짓지 않고, 자기 이해와 성장으로 안내합니다. 두려움 대신 자비의 언어를 사용하며, 결국 모든 통찰은 '오늘보다 조금 더 나은 내가 되고, 주변에 더 좋은 사람이 되는 길'로 수렴해야 합니다. 반드시 순수 JSON만 반환하고 마크다운 코드블록을 절대 사용하지 마십시오.",
           messages:[{ role:"user", content: buildPrompt() }]
         })
@@ -1876,14 +2056,30 @@ ${aspectStr}
 
       {status === "error" && (
         <Card>
-          <div style={{ textAlign:"center", padding:"16px 0" }}>
-            <div style={{ fontSize:22, marginBottom:6 }}>⚠</div>
-            <div style={{ color:"#e74c3c", fontSize:12, marginBottom:12 }}>{errMsg}</div>
+          <div style={{ textAlign:"center", padding:"20px 16px" }}>
+            <div style={{ fontSize:28, marginBottom:10 }}>🌙</div>
+            <div style={{ color:"#f0b27a", fontSize:13, marginBottom:8, lineHeight:1.7, fontWeight:500 }}>
+              {errMsg.toLowerCase().includes("overload") || errMsg.includes("혼잡") ? "별빛이 잠시 흐려졌습니다" :
+               errMsg.toLowerCase().includes("504") || errMsg.includes("시간") ? "리딩이 너무 길어졌습니다" :
+               "잠시 흐름이 멈췄습니다"}
+            </div>
+            <div style={{ color:"rgba(240,230,200,0.6)", fontSize:11, marginBottom:14, lineHeight:1.8, fontStyle:"italic" }}>
+              {errMsg.toLowerCase().includes("overload") || errMsg.includes("혼잡") ?
+                "AI 서버가 잠시 혼잡합니다.\n1-2분 후 다시 시도해 주세요. 🌸" :
+               errMsg.toLowerCase().includes("504") || errMsg.includes("시간") ?
+                "잠시 후 다시 시도해 주세요.\n대부분 두 번째 시도에서 잘 작동합니다." :
+                "잠시 후 다시 시도해 주세요."}
+            </div>
+            <div style={{ fontSize:9, color:"rgba(240,230,200,0.3)", marginBottom:14 }}>
+              상세: {errMsg}
+            </div>
             <button onClick={generate} style={{
-              padding:"7px 18px", borderRadius:5,
-              background:"rgba(168,32,32,0.2)", border:"1px solid rgba(168,32,32,0.5)",
-              color:"#ffaaaa", fontSize:11, cursor:"pointer", fontFamily:"inherit"
-            }}>다시 시도</button>
+              padding:"10px 24px", borderRadius:6,
+              background:"linear-gradient(135deg,rgba(201,168,76,0.25),rgba(155,89,182,0.15))",
+              border:"1px solid rgba(201,168,76,0.5)",
+              color:"#f0e6c8", fontSize:12, cursor:"pointer", fontFamily:"inherit",
+              letterSpacing:"0.1em"
+            }}>✦ 다시 시도</button>
           </div>
         </Card>
       )}
@@ -2056,11 +2252,11 @@ B가 A로부터 받는 용신 점수: ${compat.yongCompat.bGetsFromA}%
 
 반드시 아래 JSON 형식으로만 응답 (마크다운 코드블록 절대 금지):
 {
-  "관계의_본질": "두 사주가 만났을 때 자연스럽게 형성되는 결의 본질. 일간/일지 관계와 점성술이 무엇을 가리키는지. 350자 이상.",
-  "서로에게_주는_빛": "A가 B에게, B가 A에게 어떤 자양분을 줄 수 있는지. 양방향으로. 300자 이상.",
-  "함께_마주할_그림자": "이 관계에서 자연스럽게 부딪힐 수 있는 결. 비난이 아닌 이해의 톤으로. 300자 이상.",
-  "함께_자라는_길": "이 관계가 두 사람을 어떻게 더 나은 사람으로 만들 수 있는지. 구체적으로. 함께할 수 있는 작은 실천 포함. 350자 이상.",
-  "관계의_핵심_화두": "두 사람이 함께 깨달아 갈 인생의 화두 한 가지. 이 만남이 가진 깊은 의미. 250자 이상."
+  "관계의_본질": "두 사주가 만났을 때 자연스럽게 형성되는 결의 본질. 일간/일지 관계와 점성술이 무엇을 가리키는지. 180자 이상.",
+  "서로에게_주는_빛": "A가 B에게, B가 A에게 어떤 자양분을 줄 수 있는지. 양방향으로. 150자 이상.",
+  "함께_마주할_그림자": "이 관계에서 자연스럽게 부딪힐 수 있는 결. 비난이 아닌 이해의 톤으로. 150자 이상.",
+  "함께_자라는_길": "이 관계가 두 사람을 어떻게 더 나은 사람으로 만들 수 있는지. 구체적으로. 함께할 수 있는 작은 실천 포함. 180자 이상.",
+  "관계의_핵심_화두": "두 사람이 함께 깨달아 갈 인생의 화두 한 가지. 이 만남이 가진 깊은 의미. 120자 이상."
 }`;
   }
 
@@ -2072,7 +2268,7 @@ B가 A로부터 받는 용신 점수: ${compat.yongCompat.bGetsFromA}%
         method:"POST",
         headers:{ "Content-Type":"application/json" },
         body: JSON.stringify({
-          model:"claude-sonnet-4-6", max_tokens:4000,
+          model:"claude-haiku-4-5-20251001", max_tokens:1000,
           system:"당신은 사주명리와 점성술 양쪽에 통달한 따뜻한 관계 상담자입니다. 두 사람의 궁합을 평가하지 않고, 서로를 통해 어떻게 더 나은 사람으로 자랄 수 있는지 비춰주는 거울 역할을 합니다. 좋은 궁합도 나쁜 궁합도 없습니다. 반드시 순수 JSON만 반환하고 마크다운 코드블록을 절대 사용하지 마십시오.",
           messages:[{ role:"user", content: buildPrompt() }]
         })
@@ -2298,14 +2494,30 @@ B가 A로부터 받는 용신 점수: ${compat.yongCompat.bGetsFromA}%
 
       {readingStatus === "error" && (
         <Card>
-          <div style={{ textAlign:"center", padding:"16px 0" }}>
-            <div style={{ fontSize:22, marginBottom:6 }}>⚠</div>
-            <div style={{ color:"#e74c3c", fontSize:12, marginBottom:12 }}>{errMsg}</div>
+          <div style={{ textAlign:"center", padding:"20px 16px" }}>
+            <div style={{ fontSize:28, marginBottom:10 }}>🌙</div>
+            <div style={{ color:"#f0b27a", fontSize:13, marginBottom:8, lineHeight:1.7, fontWeight:500 }}>
+              {errMsg.toLowerCase().includes("overload") || errMsg.includes("혼잡") ? "별빛이 잠시 흐려졌습니다" :
+               errMsg.toLowerCase().includes("504") || errMsg.includes("시간") ? "리딩이 너무 길어졌습니다" :
+               "잠시 흐름이 멈췄습니다"}
+            </div>
+            <div style={{ color:"rgba(240,230,200,0.6)", fontSize:11, marginBottom:14, lineHeight:1.8, fontStyle:"italic" }}>
+              {errMsg.toLowerCase().includes("overload") || errMsg.includes("혼잡") ?
+                "AI 서버가 잠시 혼잡합니다.\n1-2분 후 다시 시도해 주세요. 🌸" :
+               errMsg.toLowerCase().includes("504") || errMsg.includes("시간") ?
+                "잠시 후 다시 시도해 주세요.\n대부분 두 번째 시도에서 잘 작동합니다." :
+                "잠시 후 다시 시도해 주세요."}
+            </div>
+            <div style={{ fontSize:9, color:"rgba(240,230,200,0.3)", marginBottom:14 }}>
+              상세: {errMsg}
+            </div>
             <button onClick={generate} style={{
-              padding:"7px 18px", borderRadius:5,
-              background:"rgba(168,32,32,0.2)", border:"1px solid rgba(168,32,32,0.5)",
-              color:"#ffaaaa", fontSize:11, cursor:"pointer", fontFamily:"inherit"
-            }}>다시 시도</button>
+              padding:"10px 24px", borderRadius:6,
+              background:"linear-gradient(135deg,rgba(201,168,76,0.25),rgba(155,89,182,0.15))",
+              border:"1px solid rgba(201,168,76,0.5)",
+              color:"#f0e6c8", fontSize:12, cursor:"pointer", fontFamily:"inherit",
+              letterSpacing:"0.1em"
+            }}>✦ 다시 시도</button>
           </div>
         </Card>
       )}
@@ -2483,6 +2695,13 @@ export default function App() {
   const [charts, setCharts] = useState(()=>loadCharts());
   const [currentChartId, setCurrentChartId] = useState(null);
   const [mode, setMode] = useState("single"); // "single" | "compat"
+  const [themeId, setThemeId] = useState(()=>loadTheme());
+  const theme = THEMES[themeId] || THEMES.night;
+
+  function changeTheme(id) {
+    setThemeId(id);
+    saveTheme(id);
+  }
 
   function handleStep1Next(formData) {
     setData(formData);
@@ -2564,8 +2783,9 @@ export default function App() {
   return (
     <div style={{
       minHeight:"100vh",
-      background:"linear-gradient(160deg,#04070f 0%,#080c1a 50%,#060a16 100%)",
-      padding:"20px 14px", fontFamily:"'Noto Serif KR',serif", color:"#f0e6c8"
+      background: theme.bg,
+      padding:"20px 14px", fontFamily:"'Noto Serif KR',serif", color: theme.text,
+      transition:"background 0.5s ease"
     }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;700&display=swap');
@@ -2576,22 +2796,27 @@ export default function App() {
         @keyframes orbA { from{transform:rotate(0deg) translateX(50px) rotate(0deg)} to{transform:rotate(360deg) translateX(50px) rotate(-360deg)} }
         @keyframes orbB { from{transform:rotate(120deg) translateX(40px) rotate(-120deg)} to{transform:rotate(480deg) translateX(40px) rotate(-480deg)} }
         @keyframes orbC { from{transform:rotate(240deg) translateX(30px) rotate(-240deg)} to{transform:rotate(600deg) translateX(30px) rotate(-600deg)} }
-        input:focus { border-color:rgba(201,168,76,0.6)!important; }
+        input:focus { border-color:${theme.accent}!important; outline:none; }
         ::-webkit-scrollbar { height:4px; width:4px; }
-        ::-webkit-scrollbar-thumb { background:rgba(201,168,76,0.3); border-radius:2px; }
+        ::-webkit-scrollbar-thumb { background:${theme.accentMuted}; border-radius:2px; }
       `}</style>
 
       <div style={{ maxWidth:520, margin:"0 auto" }}>
+        {/* Top bar with theme switcher */}
+        <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:6 }}>
+          <ThemeSwitcher currentTheme={themeId} onChange={changeTheme} />
+        </div>
+
         <div style={{ textAlign:"center", marginBottom:16, animation:"fadeUp 0.5s ease both" }}>
-          <div style={{ fontSize:9, letterSpacing:"0.4em", color:"#c9a84c", opacity:0.7, marginBottom:5 }}>
+          <div style={{ fontSize:9, letterSpacing:"0.4em", color:theme.accent, opacity:0.7, marginBottom:5 }}>
             ✦ 사주명리 · 서양점성술 통합 ✦
           </div>
-          <h1 style={{ fontSize:20, fontWeight:300, letterSpacing:"0.12em", margin:0 }}>
+          <h1 style={{ fontSize:20, fontWeight:300, letterSpacing:"0.12em", margin:0, color: theme.text }}>
             命 · Astrochart · 統合
           </h1>
-          <div style={{ height:1, background:"linear-gradient(90deg,transparent,rgba(201,168,76,0.4),transparent)", margin:"10px 0" }}/>
+          <div style={{ height:1, background:`linear-gradient(90deg,transparent,${theme.divider},transparent)`, margin:"10px 0" }}/>
           <div style={{
-            fontSize:10, lineHeight:1.9, color:"rgba(240,230,200,0.55)",
+            fontSize:10, lineHeight:1.9, color: theme.textMuted,
             fontStyle:"italic", letterSpacing:"0.03em",
             maxWidth:380, margin:"0 auto"
           }}>
@@ -2599,13 +2824,13 @@ export default function App() {
             누구나 빛과 그림자를 함께 가지고 있습니다.
           </div>
           <div style={{
-            fontSize:11, lineHeight:1.9, color:"#c9a84c",
+            fontSize:11, lineHeight:1.9, color: theme.accent,
             letterSpacing:"0.05em", marginTop:10,
             maxWidth:380, margin:"10px auto 0",
             padding:"8px 14px",
-            background:"linear-gradient(90deg,transparent,rgba(201,168,76,0.06),transparent)",
-            borderTop:"1px solid rgba(201,168,76,0.2)",
-            borderBottom:"1px solid rgba(201,168,76,0.2)"
+            background:`linear-gradient(90deg,transparent,${theme.cardBorder},transparent)`,
+            borderTop:`1px solid ${theme.cardBorder}`,
+            borderBottom:`1px solid ${theme.cardBorder}`
           }}>
             오늘의 나보다 조금 더 나은 내가 되는 법,<br/>
             <span style={{ opacity:0.8 }}>그리고 주위 사람들에게 더 좋은 사람이 되는 것</span>
@@ -2677,7 +2902,7 @@ export default function App() {
           </div>
         )}
 
-        {mode === "single" && step === 0 && <Step1Input data={data} onNext={handleStep1Next} />}
+        {mode === "single" && step === 0 && <Step1Input data={data} onNext={handleStep1Next} theme={theme} />}
         {mode === "single" && step === 1 && computed && (
           <Step2Saju
             pillars={computed.pillars} meta={computed.meta}
